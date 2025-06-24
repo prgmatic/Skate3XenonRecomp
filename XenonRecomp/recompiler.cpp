@@ -3,6 +3,8 @@
 #include <xex_patcher.h>
 #include <sstream>
 
+#define MISSING_INST_CASE(x) case PPC_INST_##x: println("\tthrow std::runtime_error(\"Missing Instruction: " #x "\");"); break;
+
 static uint64_t ComputeMask(uint32_t mstart, uint32_t mstop)
 {
     mstart &= 0x3F;
@@ -526,6 +528,40 @@ bool Recompiler::Recompile(
 
     switch (id)
     {
+    MISSING_INST_CASE(ADDC)
+    MISSING_INST_CASE(ADDME)
+    MISSING_INST_CASE(BDNZT)
+    MISSING_INST_CASE(BDZF)
+    MISSING_INST_CASE(LBZUX)
+    MISSING_INST_CASE(LFDU)
+    MISSING_INST_CASE(LFSU)
+    MISSING_INST_CASE(LFSUX)
+    MISSING_INST_CASE(LHAU)
+    MISSING_INST_CASE(LHZU)
+    MISSING_INST_CASE(LHZUX)
+    MISSING_INST_CASE(LVEHX)
+    MISSING_INST_CASE(LWZUX)
+    MISSING_INST_CASE(STBUX)
+    MISSING_INST_CASE(STDUX)
+    MISSING_INST_CASE(STFDU)
+    MISSING_INST_CASE(STFSUX)
+    MISSING_INST_CASE(STHU)
+    MISSING_INST_CASE(STHUX)
+    MISSING_INST_CASE(SUBFZE)
+    MISSING_INST_CASE(VADDSWS)
+    MISSING_INST_CASE(VCFPUXWS128)
+    MISSING_INST_CASE(VCMPGTUW)
+    MISSING_INST_CASE(VNOR128)
+    MISSING_INST_CASE(VPKUHUM128)
+    MISSING_INST_CASE(VPKUWUM128)
+    MISSING_INST_CASE(VPKUWUS128)
+    MISSING_INST_CASE(VRLW128)
+    MISSING_INST_CASE(VSL)
+    MISSING_INST_CASE(VSPLTISH)
+    MISSING_INST_CASE(VSUBUBM)
+    MISSING_INST_CASE(VSUBUWM)
+
+
     case PPC_INST_ADD:
         println("\t{}.u64 = {}.u64 + {}.u64;", r(insn.operands[0]), r(insn.operands[1]), r(insn.operands[2]));
         if (strchr(insn.opcode->name, '.'))
@@ -619,7 +655,7 @@ bool Recompiler::Recompile(
                 if (label < fn.base || label >= fn.base + fn.size)
                 {
                     println("\t\t// ERROR: 0x{:X}", label);
-                    fmt::println("ERROR: Switch case at {:X} is trying to jump outside function: {:X}", base, label);
+                    fmt::println("ERROR: Switch case at {:X} is trying to jump outside function: {:X} fn.base: {:X} fn.size: {:X}", base, label, fn.base, fn.size);
                     println("\t\treturn;");
                 }
                 else
