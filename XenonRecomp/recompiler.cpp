@@ -2782,7 +2782,8 @@ void Recompiler::Recompile(const std::filesystem::path& headerFilePath)
     {
         println("#pragma once\n");
         println("#include \"ppc_config.h\"");
-        println("#include \"ppc_context.h\"\n");
+        println("#include \"ppc_context.h\"");
+        println("#include <stdexcept>\n");
 
         for (auto& symbol : image.symbols)
             println("PPC_EXTERN_FUNC({});", symbol.name);
